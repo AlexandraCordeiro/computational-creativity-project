@@ -29,39 +29,40 @@ class Individual {
         this.music_dur = int(random(60000, 360000));
     };
 
-
-        void renderIndividual(float cx, float cy) {
-            int r = 255;
-            int g = 0;
-            int b = 0;
-
-            for (int i = 0; i < this.num_layers; i++) {
-                for (int j = 0; j <= this.num_circles; j++) {
-                    push();
-                    translate(cx, cy);
-                    noStroke();
-                    fill(0);
-                    // fill(r, j, b);
-                    // fill(random(255), random(255), random(255), random(255));
-                    // rect(this.layers[i][j].x, this.layers[i][j].y, this.layers[i][j].z, this.layers[i][j].z);
-                    circle(this.layers[i][j].x, this.layers[i][j].y, this.layers[i][j].z);
-                    pop();
-                }
-            }
+    // Create individual shapes
+    void createIndividual(PGraphics canvas, float cx, float cy) {
+    noiseSeed(millis());
+    int r = int(map(music_dur, 0, 360000, 0, canvas.width * 0.3));
+    float t = 0;
+    for (int i = 0; i < num_layers; i++) {
+        layers[i] = imperfectCircle(cx, cy, r, t, i);
+        r += 20;
+        t++;
+    }
     }
 
-    void createIndividual(float cx, float cy) {
-        noiseSeed(millis());
-        int r = int(map(this.music_dur, 0, 360000, 0, width*0.3));
-        float t = 0;
-        for (int i = 0; i < this.num_layers; i++) {
-            this.layers[i] = this.imperfectCircle(cx, cy, r, t, i);
-            r += 20;
-            t++;
-            // printArray(this.layers[i]);
+    // Render individual shapes
+    void renderIndividual(PGraphics canvas, float cx, float cy) {
+    int r = 255;
+    int g = 0;
+    int b = 0;
+
+    for (int i = 0; i < num_layers; i++) {
+        for (int j = 0; j <= num_circles; j++) {
+        canvas.pushMatrix();
+        canvas.translate(cx, cy);
+        canvas.noStroke();
+        canvas.fill(0);
+        // fill(r, j, b);
+        // fill(random(255), random(255), random(255), random(255));
+        // rect(layers[i][j].x, layers[i][j].y, layers[i][j].z, layers[i][j].z);
+    
+        canvas.circle(x, y, z);
+        canvas.circle(layers[i][j].x, layers[i][j].y, layers[i][j].z);
+        canvas.popMatrix();
         }
     }
-
+    }
 
     PVector[] imperfectCircle(float xi, float yi, float r, float t, int index) {
 
@@ -120,7 +121,6 @@ class Individual {
         return child;
     }
 
-
     // Set the fitness value
     void setFitness(float fitness) {
         this.fitness = fitness;
@@ -132,7 +132,6 @@ class Individual {
     }
     
     String getFitnessText(){
-    
       if (this.fitness == 1){
         return "Like";
       } 
@@ -142,8 +141,6 @@ class Individual {
     }
     
    
-  
-  
   // Get the phenotype (image)
   PImage getPhenotype(int resolution) {
     PGraphics canvas = createGraphics(resolution, resolution);
@@ -152,26 +149,20 @@ class Individual {
     canvas.noFill();
     canvas.stroke(0);
     canvas.strokeWeight(canvas.height * 0.002);
+    createIndividual(canvas, canvas.width / 2, canvas.height / 2);
     render(canvas, canvas.width / 2, canvas.height / 2, canvas.width, canvas.height);
+   
     canvas.endDraw();
     return canvas;
   }
   
     // Draw the harmonograph line on a given canvas, at a given position and with a given size
     void render(PGraphics canvas, float cx, float cy, float w, float h) {
-    //calculatePoints(w, h);
     canvas.pushMatrix();
     canvas.translate(cx, cy);
     canvas.beginShape();
-  //  for (int i = 0; i < points.size(); i++) {
-    //  canvas.vertex(points.get(i).x, points.get(i).y);
-   // }
-     createIndividual(cx,cy);
-     renderIndividual(cx,cy);
-   
-   
- 
-    canvas.endShape();
+   // createIndividual(cx,cy);
+    renderIndividual(canvas,cx,cy);
     canvas.popMatrix();
   }
 }

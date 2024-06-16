@@ -39,7 +39,7 @@ void setup() {
     offspringCoordinates[1][1] = height * 0.7;
 
     population = new Population();
-
+/*
     for (int i = 0; i < population.getSize(); i++) {
         population.getIndiv(i).createIndividual(coordinates[i][0], coordinates[i][1]);
         population.getIndiv(i).renderIndividual(coordinates[i][0], coordinates[i][1]);
@@ -60,6 +60,7 @@ void setup() {
         Individual parent2 = population.getIndiv(i + 1);
         offspring[i] = parent1.onePointCrossover(parent2);
     }
+    */
 }
 
 }
