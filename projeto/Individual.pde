@@ -29,27 +29,39 @@ class Individual {
     };
 
 
-        void renderIndividual(float cx, float cy) {
-            int r = 255;
-            int g = 0;
-            int b = 0;
+    Individual(PVector[][] layers, int music_dur) {
+        this.music_dur = music_dur;
 
-            for (int i = 0; i < this.num_layers; i++) {
-                for (int j = 0; j <= this.num_circles; j++) {
-                    push();
-                    translate(cx, cy);
-                    noStroke();
-                    fill(0);
-                    // fill(r, j, b);
-                    // fill(random(255), random(255), random(255), random(255));
-                    // rect(this.layers[i][j].x, this.layers[i][j].y, this.layers[i][j].z, this.layers[i][j].z);
-                    circle(this.layers[i][j].x, this.layers[i][j].y, this.layers[i][j].z);
-                    pop();
-                }
+        for (int i = 0; i < this.num_layers; i++) {
+            this.layers[i] = new PVector[this.num_circles + 1];
+            for (int j = 0; j <= this.num_circles; j++) {
+                this.layers[i][j] = new PVector(layers[i][j].x, layers[i][j].y, layers[i][j].z); 
             }
+        }
+    }
+
+    void renderIndividual(float cx, float cy) {
+        int r = 255;
+        int g = 0;
+        int b = 0;
+
+        for (int i = 0; i < this.num_layers; i++) {
+            for (int j = 0; j <= this.num_circles; j++) {
+                push();
+                translate(cx, cy);
+                noStroke();
+                fill(0);
+                // fill(r, j, b);
+                // fill(random(255), random(255), random(255), random(255));
+                // rect(this.layers[i][j].x, this.layers[i][j].y, this.layers[i][j].z, this.layers[i][j].z);
+                circle(this.layers[i][j].x, this.layers[i][j].y, this.layers[i][j].z);
+                pop();
+            }
+        }
     }
 
     void createIndividual(float cx, float cy) {
+        // ensure randomness for each individual
         noiseSeed(millis());
         int r = int(map(this.music_dur, 0, 360000, 0, width*0.3));
         float t = 0;
@@ -57,7 +69,6 @@ class Individual {
             this.layers[i] = this.imperfectCircle(cx, cy, r, t, i);
             r += 20;
             t++;
-            // printArray(this.layers[i]);
         }
     }
 
@@ -82,17 +93,11 @@ class Individual {
             float x = new_r  * cos(i); 
             float y = new_r  * sin(i);
 
-            
-            
-
             int freq = int(random(20, 20000));
-            // float freq = this.data.frequencyList.get(0)[n];
             int raio = int(map(freq, 20, 20000, 1, 7)); 
             layerCoordinates[n] = new PVector(x, y, raio);
             n++;
-            /* if (n < 360) {
-            }   */
-            // println(n);
+
         }
         t += 1;
         pop();
@@ -118,4 +123,21 @@ class Individual {
         }
         return child;
     }
+
+    void mutate() {
+        int mutatedLayers = int(mutationRate * (num_layers)) - 1;
+        noiseSeed(millis());
+        int r = int(map(this.music_dur, 0, 360000, 0, width*0.3));
+        float t = 0;
+        for (int i = 0; i < mutatedLayers; i++) {
+            this.layers[i] = this.imperfectCircle(cx, cy, r, t, i);
+            r += 20;
+            t++;
+        }
+    }
+
+    Individual getCopy() {
+        Individual copy = new Individual(this.layers, this.music_dur);
+        return copy;
+  }
 }

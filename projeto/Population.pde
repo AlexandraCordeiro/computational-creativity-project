@@ -2,7 +2,7 @@
     Individual[] individuals;
 
     Population() {
-        individuals = new Individual[pop_size];
+        individuals = new Individual[popSize];
         init();
     }
 
