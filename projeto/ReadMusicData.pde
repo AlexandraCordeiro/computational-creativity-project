@@ -13,7 +13,7 @@ class ReadMusicData {
 
     ReadMusicData() {
         println("*****");
-        JSONObject data = loadJSONObject("../outputData/sound_data.json");
+        JSONObject data = loadJSONObject("./outputData/sound_data.json");
   
         // Iterate over each song
         for (int i = 1; i <= 3; i++) {

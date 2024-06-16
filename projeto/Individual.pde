@@ -1,5 +1,6 @@
 class Individual {
     int music_dur;
+    float fitness = 0; // Fitness value
     int num_layers = 20;
     int num_circles = 360;
     int[][] freqs = new int[num_layers][num_circles + 1];
@@ -118,4 +119,59 @@ class Individual {
         }
         return child;
     }
+
+
+    // Set the fitness value
+    void setFitness(float fitness) {
+        this.fitness = fitness;
+    }
+    
+    // Get the fitness value
+    float getFitness() {
+        return fitness;
+    }
+    
+    String getFitnessText(){
+    
+      if (this.fitness == 1){
+        return "Like";
+      } 
+      else {
+        return "Dislike";
+      }
+    }
+    
+   
+  
+  
+  // Get the phenotype (image)
+  PImage getPhenotype(int resolution) {
+    PGraphics canvas = createGraphics(resolution, resolution);
+    canvas.beginDraw();
+    canvas.background(255);
+    canvas.noFill();
+    canvas.stroke(0);
+    canvas.strokeWeight(canvas.height * 0.002);
+    render(canvas, canvas.width / 2, canvas.height / 2, canvas.width, canvas.height);
+    canvas.endDraw();
+    return canvas;
+  }
+  
+    // Draw the harmonograph line on a given canvas, at a given position and with a given size
+    void render(PGraphics canvas, float cx, float cy, float w, float h) {
+    //calculatePoints(w, h);
+    canvas.pushMatrix();
+    canvas.translate(cx, cy);
+    canvas.beginShape();
+  //  for (int i = 0; i < points.size(); i++) {
+    //  canvas.vertex(points.get(i).x, points.get(i).y);
+   // }
+     createIndividual(cx,cy);
+     renderIndividual(cx,cy);
+   
+   
+ 
+    canvas.endShape();
+    canvas.popMatrix();
+  }
 }

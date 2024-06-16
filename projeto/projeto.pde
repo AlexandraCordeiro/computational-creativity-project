@@ -1,3 +1,6 @@
+class Projeto{
+
+
 float[][] coordinates = new float[3][2];
 float[][] offspringCoordinates = new float[2][2];
 
@@ -57,4 +60,6 @@ void setup() {
         Individual parent2 = population.getIndiv(i + 1);
         offspring[i] = parent1.onePointCrossover(parent2);
     }
+}
+
 }
