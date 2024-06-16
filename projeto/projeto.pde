@@ -1,51 +1,60 @@
-float ang = 0;
-int n = 100;
-float[] freqs = new float[n];
+float[][] coordinates = new float[3][2];
+float[][] offspringCoordinates = new float[2][2];
+
+int pop_size = 3;
+float cx;
+float cy;
+int w, h;
 
 
-int h = 800;
-int w = 800;
+Population population;
+Individual[] offspring;
 
-
-float cx = w*0.5;
-float cy = h*0.5;
-
+void settings() {
+    size(int(displayWidth * 0.9), int(displayHeight * 0.8));
+}
 
 void setup() {
-  size(800, 800);  // A5
-  initValues(freqs, 20, 15000);
-  Candidate c = new Candidate();
-  c.renderCandidate();
-  
-}
+    h = 100;
+    w = 100;
+    cx = width * 0.5;
+    cy = height * 0.5;
+
+    // parents coordinates
+    coordinates[0][0] = width * 0.2;
+    coordinates[0][1] = height * 0.3;
+    coordinates[1][0] = width * 0.5;
+    coordinates[1][1] = height * 0.3;
+    coordinates[2][0] = width * 0.8;
+    coordinates[2][1] = height * 0.3;
 
 
-float log10 (float x) {
-  return (log(x) / log(10));
-}
+    // offspring coordinates
+    offspringCoordinates[0][0] = width * 0.35;
+    offspringCoordinates[0][1] = height * 0.7;
+    offspringCoordinates[1][0] = width * 0.65;
+    offspringCoordinates[1][1] = height * 0.7;
 
-void circleOfCircles(float r, float scale, int n, float values[]) {
-  push();
-  translate(cx, cy);
-  
-  for (int i = 0; i < n; i++) {
-        // noFill();
-        noStroke();
-        fill(random(255), random(255),0);
-        // RGB + alpha
-        float orderOfMagnitude = floor(log10(values[i]));
-        // println(orderOfMagnitude);
-        float new_r = orderOfMagnitude * (values[i] / pow(10, orderOfMagnitude) * scale);
-        // stroke(0, 0, 0/*, values[i] * orderOfMagnitude*/);
-        // strokeWeight(new_r / 20);
-        circle(r * .5 * cos(ang), r * .5 * sin(ang), new_r);
-        ang += TWO_PI / n;
+    population = new Population();
+
+    for (int i = 0; i < population.getSize(); i++) {
+        population.getIndiv(i).createIndividual(coordinates[i][0], coordinates[i][1]);
+        population.getIndiv(i).renderIndividual(coordinates[i][0], coordinates[i][1]);
     }
-    pop();
-}
 
-void initValues(float[] values, int minRange, int maxRange) {
-  for (int i = 0; i < values.length; i++) {
-    values[i] = random(minRange, maxRange);
-  }
+    offspring = new Individual[population.getSize() - 1];
+    recombinePairsOfIndividuals();
+
+    for (int i = 0; i < offspring.length; i++) {
+        offspring[i].renderIndividual(offspringCoordinates[i][0], offspringCoordinates[i][1]);
+    }
+    }
+
+
+    void recombinePairsOfIndividuals() {
+    for (int i = 0; i < offspring.length; i++) {
+        Individual parent1 = population.getIndiv(i);
+        Individual parent2 = population.getIndiv(i + 1);
+        offspring[i] = parent1.onePointCrossover(parent2);
+    }
 }
