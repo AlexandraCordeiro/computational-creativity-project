@@ -77,7 +77,7 @@ class Individual {
     }
     }
 
-    PVector[] imperfectCircle(float xi, float yi, float r, float t, int index) {
+    PVector[] imperfectCircle(float xi, float yi, float r, float t, int layer) {
 
         float speed = 0.03; 
         float bobbleRate = 1;
@@ -97,7 +97,7 @@ class Individual {
             float x = new_r  * cos(i); 
             float y = new_r  * sin(i);
             
-            float amplitude = this.data.amplitudeList.get(0)[n + index * 361];
+            float amplitude = this.data.amplitudeList.get(0)[layer][n];
             //int freq = int(random(20, 20000));
             //float freq = this.data.frequencyList.get(0)[n + index * 361];
             int raio = int(map(amplitude, 0, 1, 1, 50)); 
@@ -105,7 +105,7 @@ class Individual {
             layerCoordinates[n] = new PVector(x, y, raio);
             n++;
             
-            println(n);
+           
         }
         t += 1;
         pop();
