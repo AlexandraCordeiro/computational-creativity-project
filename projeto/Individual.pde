@@ -50,14 +50,13 @@ class Individual {
     for (int i = 0; i < num_layers; i++) {
         for (int j = 0; j <= num_circles; j++) {
         canvas.pushMatrix();
-        canvas.translate(cx, cy);
+        canvas.translate(0, 0);
         canvas.noStroke();
         canvas.fill(0);
         // fill(r, j, b);
         // fill(random(255), random(255), random(255), random(255));
         // rect(layers[i][j].x, layers[i][j].y, layers[i][j].z, layers[i][j].z);
     
-        canvas.circle(x, y, z);
         canvas.circle(layers[i][j].x, layers[i][j].y, layers[i][j].z);
         canvas.popMatrix();
         }

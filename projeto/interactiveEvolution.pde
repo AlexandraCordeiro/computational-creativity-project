@@ -3,7 +3,7 @@ int elite_size = 1;
 int tournament_size = 3;
 float crossover_rate = 0.7;
 float mutation_rate = 0.2;
-int resolution = 256;
+int resolution = 1080;
 
 Population population;
 PVector[][] cells;
@@ -58,6 +58,7 @@ void draw() {
       col = 0;
     }
   }
+  //noLoop();
 }
 
 void keyReleased() {
