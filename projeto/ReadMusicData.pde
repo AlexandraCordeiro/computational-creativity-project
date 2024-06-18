@@ -9,7 +9,9 @@ class ReadMusicData {
     ArrayList<float[]> rmseList = new ArrayList<float[]>();
 
     // Define the number of slices
-    int numSlices = 360;
+    int numCircles = 361;
+    int numLayers = 20;
+    int numSlices = numCircles * numLayers;
 
     ReadMusicData() {
         println("*****");
@@ -40,6 +42,11 @@ class ReadMusicData {
     float[] extractFeatureArray(JSONObject song, String featureName) {
         JSONArray array = song.getJSONArray(featureName);
         if (array != null) {
+
+            //for(int j=0; j < numLayers; j++){
+                
+           // }
+
             float[] featureArray = new float[numSlices];
             for (int i = 0; i < numSlices; i++) {
                 featureArray[i] = array.getFloat(i);

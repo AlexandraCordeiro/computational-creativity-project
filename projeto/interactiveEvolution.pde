@@ -16,6 +16,9 @@ void settings() {
 
 void setup() {
   population = new Population();
+  for (int i = 0; i < population.getSize(); i++) {
+        population.getIndiv(i).createIndividual(0,0);
+    }
   cells = calculateGrid(pop_size, 0, 0, width, height, 30, 10, 30, true);
   textSize(constrain(cells[0][0].z * 0.15, 11, 14));
   textAlign(CENTER, TOP);
@@ -45,7 +48,7 @@ void draw() {
       rect(x, y, d, d);
     }
     // Draw phenotype of current individual
-    image(population.getIndiv(i).getPhenotype(resolution), x, y, d, d);
+    image(population.getIndiv(i).getPhenotype(), x, y, d, d);
     // Draw fitness of current individual
     fill(0);
    // text(nf(population.getIndiv(i).getFitness(), 0, 2), x + d / 2, y + d + 5);
@@ -79,7 +82,7 @@ void keyReleased() {
     }
   } else if (key == ' ') {
     // Evolve (generate new population)
-    //population.evolve();
+    population.evolve();
   } else if (key == 'i') {
     // Initialise new population
     population.init();

@@ -6,6 +6,7 @@ class Individual {
     int[][] freqs = new int[num_layers][num_circles + 1];
     PVector[][] layers = new PVector[num_layers][];
     ReadMusicData data = new ReadMusicData();
+    int resolution = 1080;
 
 
     Individual() {
@@ -28,15 +29,28 @@ class Individual {
         // 1 - 6 min
         this.music_dur = int(random(60000, 360000));
     };
+    
+    Individual(PVector[][] layers, int music_dur) {
+        this.music_dur = music_dur;
+
+        for (int i = 0; i < this.num_layers; i++) {
+            this.layers[i] = new PVector[this.num_circles + 1];
+            for (int j = 0; j <= this.num_circles; j++) {
+                this.layers[i][j] = new PVector(layers[i][j].x, layers[i][j].y, layers[i][j].z); 
+            }
+        }
+    }
+
+    
 
     // Create individual shapes
-    void createIndividual(PGraphics canvas, float cx, float cy) {
+    void createIndividual(float cx, float cy) {
     noiseSeed(millis());
-    int r = int(map(music_dur, 0, 360000, 0, canvas.width * 0.3));
+    int r = int(map(music_dur, 0, 360000, 0, this.resolution * 0.3));
     float t = 0;
     for (int i = 0; i < num_layers; i++) {
         layers[i] = imperfectCircle(cx, cy, r, t, i);
-        r += 20;
+        r += 30;
         t++;
     }
     }
@@ -53,9 +67,9 @@ class Individual {
         canvas.translate(0, 0);
         canvas.noStroke();
         canvas.fill(0);
-        // fill(r, j, b);
-        // fill(random(255), random(255), random(255), random(255));
-        // rect(layers[i][j].x, layers[i][j].y, layers[i][j].z, layers[i][j].z);
+        // canvas.fill(r, j, b);
+        // canvas.fill(0, 0, random(255), random(255));
+        // canvas.rect(layers[i][j].x, layers[i][j].y, layers[i][j].z, layers[i][j].z);
     
         canvas.circle(layers[i][j].x, layers[i][j].y, layers[i][j].z);
         canvas.popMatrix();
@@ -82,18 +96,16 @@ class Individual {
             float new_r = map(noise, 0, 1, 80, r);
             float x = new_r  * cos(i); 
             float y = new_r  * sin(i);
-
             
-            
-
-            int freq = int(random(20, 20000));
-            // float freq = this.data.frequencyList.get(0)[n];
-            int raio = int(map(freq, 20, 20000, 1, 7)); 
+            float amplitude = this.data.amplitudeList.get(0)[n + index * 361];
+            //int freq = int(random(20, 20000));
+            //float freq = this.data.frequencyList.get(0)[n + index * 361];
+            int raio = int(map(amplitude, 0, 1, 1, 50)); 
+            //int raio = int(map(freq, 20, 20000, 1, 100)); 
             layerCoordinates[n] = new PVector(x, y, raio);
             n++;
-            /* if (n < 360) {
-            }   */
-            // println(n);
+            
+            println(n);
         }
         t += 1;
         pop();
@@ -120,6 +132,23 @@ class Individual {
         return child;
     }
 
+    void mutate() {
+            int mutatedLayers = int(mutation_rate * (num_layers)) - 1;
+            noiseSeed(millis());
+            int r = int(map(this.music_dur, 0, 360000, 0, width*0.3));
+            float t = 0;
+            for (int i = 0; i < mutatedLayers; i++) {
+                this.layers[i] = this.imperfectCircle(0, 0, r, t, i);
+                r += 20;
+                t++;
+            }
+        }
+
+    Individual getCopy() {
+        Individual copy = new Individual(this.layers, this.music_dur);
+        return copy;
+    }
+
     // Set the fitness value
     void setFitness(float fitness) {
         this.fitness = fitness;
@@ -141,14 +170,14 @@ class Individual {
     
    
   // Get the phenotype (image)
-  PImage getPhenotype(int resolution) {
-    PGraphics canvas = createGraphics(resolution, resolution);
+  PImage getPhenotype() {
+    PGraphics canvas = createGraphics(this.resolution, this.resolution);
     canvas.beginDraw();
     canvas.background(255);
     canvas.noFill();
     canvas.stroke(0);
     canvas.strokeWeight(canvas.height * 0.002);
-    createIndividual(canvas, canvas.width / 2, canvas.height / 2);
+    // createIndividual(canvas, canvas.width / 2, canvas.height / 2);
     render(canvas, canvas.width / 2, canvas.height / 2, canvas.width, canvas.height);
    
     canvas.endDraw();
@@ -164,4 +193,6 @@ class Individual {
     renderIndividual(canvas,cx,cy);
     canvas.popMatrix();
   }
+
+
 }

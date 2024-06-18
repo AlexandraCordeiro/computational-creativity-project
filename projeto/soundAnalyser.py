@@ -2,7 +2,12 @@ import librosa
 import numpy as np
 import json
 
-def analyze_audio(file_path, num_slices=360):
+
+numCircles = 361
+numLayers = 20
+
+
+def analyze_audio(file_path, num_slices= numCircles * numLayers):
     # Load the audio file
     y, sr = librosa.load(file_path)
 
@@ -58,7 +63,7 @@ def analyze_audio(file_path, num_slices=360):
     mfccs = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13)
     tonnetz = librosa.feature.tonnetz(y=y, sr=sr)
     #onset_env = librosa.onset.onset_strength(y=y, sr=sr)
-    chroma = librosa.feature.chroma_stft(y=y, sr=sr)
+    #chroma = librosa.feature.chroma_stft(y=y, sr=sr)
     zero_crossing_rate = librosa.feature.zero_crossing_rate(y)[0]
     spectral_bandwidth = librosa.feature.spectral_bandwidth(y=y, sr=sr)[0]
     spectral_contrast = librosa.feature.spectral_contrast(y=y, sr=sr)[0]
@@ -102,7 +107,7 @@ def analyze_audio(file_path, num_slices=360):
    # mfcc_slices = [slice_and_average(mfcc) for mfcc in mfccs]
    # tonnetz_slices = [slice_and_average(t) for t in tonnetz]
    # onset_slices = slice_and_average(onset_env)
-   # chroma_slices = [slice_and_average(c) for c in chroma]
+   #chroma_slices = [slice_and_average(c) for c in chroma]
 
     # Prepare the data for this audio file
     data = {
@@ -110,12 +115,12 @@ def analyze_audio(file_path, num_slices=360):
         "frequency": frequency_slices,
         "zero_crossing_rate": zero_crossing_slices,
         "spectral_bandwidth": bandwidth_slices,
-       # "spectral_contrast": contrast_slices,
+        "spectral_contrast": contrast_slices,
         "rmse": rmse_slices,
-       # "flatness": flatness
+       # "flatness": flatness,
        # "mfcc": mfcc_slices,
        #"tonnetz": tonnetz_slices,
-       # "chroma": chroma_slices
+        #"chroma": chroma_slices
     }
 
     return data
@@ -123,8 +128,6 @@ def analyze_audio(file_path, num_slices=360):
 def save_to_json(all_data, output_file):
     with open(output_file, 'w') as f:
         json.dump(all_data, f, indent=4)
-
-
 
 file_paths = ['./audio/Chopin-ValsaMinuto.wav', './audio/Chopin-ValsaMinuto.wav', './audio/Chopin-ValsaMinuto.wav']
 output_file = './outputData/sound_data.json'
@@ -153,3 +156,9 @@ print(f"Analysis data saved to {output_file}")
 # librosa.feature.spectral_flatness(*, y=None, S=None, n_fft=2048, hop_length=512, win_length=None, window='hann', center=True, pad_mode='constant', amin=1e-10, power=2.0)[source]
 # Compute spectral flatness
 # Spectral flatness (or tonality coefficient) is a measure to quantify how much noise-like a sound is, as opposed to being tone-like 1. A high spectral flatness (closer to 1.0) indicates the spectrum is similar to white noise. It is often converted to decibel.
+
+#mfcc vocal
+
+
+
+#send musid duration in milliseconds too.
