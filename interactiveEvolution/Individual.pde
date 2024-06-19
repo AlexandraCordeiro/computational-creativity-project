@@ -1,5 +1,5 @@
 class Individual {
-    int music_dur;
+   
     float fitness = 0; // Fitness value
     int num_layers = 20;
     int num_circles = 360;
@@ -7,6 +7,7 @@ class Individual {
     PVector[][] layers = new PVector[num_layers][];
     ReadMusicData data = new ReadMusicData();
     int resolution = 1080;
+    int music_dur = this.data.duration_ms;
 
 
     Individual() {
@@ -27,7 +28,7 @@ class Individual {
         }
 
         // 1 - 6 min
-        this.music_dur = int(random(60000, 360000));
+       // this.music_dur = int(random(60000, 360000));
     };
     
     Individual(PVector[][] layers, int music_dur) {

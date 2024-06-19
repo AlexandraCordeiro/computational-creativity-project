@@ -16,6 +16,7 @@ def analyze_audio(file_path, num_slices= numCircles * numLayers):
 
     # duration of the audio in seconds
     duration = librosa.get_duration(y=y, sr=sr)
+    ms_duration = duration * 1000
 
     # Compute the amplitude (unitless)
     amplitude = np.abs(y)
@@ -111,6 +112,7 @@ def analyze_audio(file_path, num_slices= numCircles * numLayers):
 
     # Prepare the data for this audio file
     data = {
+        "duration": ms_duration,
         "amplitude": amplitude_slices,
         "frequency": frequency_slices,
         "zero_crossing_rate": zero_crossing_slices,

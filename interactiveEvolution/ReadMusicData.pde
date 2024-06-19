@@ -7,6 +7,7 @@ class ReadMusicData {
     ArrayList<float[][]> spectralBandwidthList = new ArrayList<float[][]>();
     ArrayList<float[][]> spectralContrastList = new ArrayList<float[][]>();
     ArrayList<float[][]> rmseList = new ArrayList<float[][]>();
+    int duration_ms;
 
 
     // Define the number of slices
@@ -22,6 +23,7 @@ class ReadMusicData {
         for (int i = 1; i <= 3; i++) {
             // Extract song object
             JSONObject song = data.getJSONObject("song" + i);
+            duration_ms = extractMusicDuration(song,"duration");
             
             // Extract feature arrays for the current song
             amplitudeList.add(extractFeatureArray(song, "amplitude"));
@@ -35,6 +37,16 @@ class ReadMusicData {
         //println("Amplitude of Song 1:");
         //print2DArray(amplitudeList.get(0));
      
+    }
+
+    int extractMusicDuration(JSONObject song, String featureName) {
+        if (song.hasKey(featureName)) {
+            float durationSeconds = song.getFloat(featureName);
+            return int(round(durationSeconds)); 
+        } else {
+            println("Feature '" + featureName + "' not found in song data.");
+            return -1;
+        }
     }
 
     float[][] extractFeatureArray(JSONObject song, String featureName) {
