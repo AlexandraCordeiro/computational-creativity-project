@@ -1,3 +1,10 @@
+import controlP5.*;
+import processing.core.*;
+
+PFont montserrat;
+ControlP5 cp5;
+ColorPicker cp;
+
 int pop_size = 8;
 int elite_size = 1;
 int tournament_size = 3;
@@ -8,6 +15,7 @@ int resolution = 1080;
 Population population;
 PVector[][] cells;
 Individual selected_indiv = null;
+int circleColor = color(255, 0, 0);
 
 void settings() {
   size(int(displayWidth * 0.9), int(displayHeight * 0.8), P2D);
@@ -15,20 +23,48 @@ void settings() {
 }
 
 void setup() {
+  //frameRate(60);
+  // Load Montserrat font from file (adjust the path to match your setup)
+  montserrat = createFont("./font/Montserrat-Regular.ttf", 12);
+  
+  // Set text font to Montserrat
+  textFont(montserrat);
+  
   population = new Population();
   for (int i = 0; i < population.getSize(); i++) {
         population.getIndiv(i).createIndividual(0,0);
     }
-  cells = calculateGrid(pop_size, 0, 0, width, height, 30, 10, 30, true);
-  textSize(constrain(cells[0][0].z * 0.15, 11, 14));
+  cells = calculateGrid(pop_size, 0, 0, width, height, 50, 10, 30, true);
+  textSize(12);
   textAlign(CENTER, TOP);
-}
 
+  // Initialize controlP5
+  cp5 = new ControlP5(this);
+
+  // Create the button
+  cp5.addButton("newGeneration")
+     .setLabel("Next")
+     .setPosition(width - 200,  height - 50)
+     .setSize(120, 30);
+     
+   /*
+  // Create color picker
+  cp = cp5.addColorPicker("colorPicker")
+          .setPosition(50, height - 60)
+          .setSize(50, 50)
+          .setColorValue(circleColor)
+          .setColorBackground(color(100))
+          .setColorForeground(color(200));
+   
+}
+*/
+  
+ 
 void draw() {
   background(235);
   selected_indiv = null; // Temporarily clear selected individual
   fill(0);
-  text("Select your favorite images and enter", width/2, 10);
+  text("Choose your favorite images and press next", width/2, 10);
   int row = 0, col = 0;
   for (int i = 0; i < population.getSize(); i++) {
     float x = cells[row][col].x;
@@ -61,7 +97,12 @@ void draw() {
       col = 0;
     }
   }
-  //noLoop();
+  
+  fill(0);
+  textSize(16);
+  //textAlign(CENTER, BOTTOM);
+  text("Generation: " + population.getGenerations(), width / 2, height - 50);
+  
 }
 
 void keyReleased() {
@@ -104,6 +145,20 @@ void mouseReleased() {
     }
   }
 }
+
+// Button callback function
+void newGeneration() {
+  population.evolve();
+}
+
+/*
+void controlEvent(ControlEvent event) {
+  if (event.isFrom(cp)) {
+    circleColor = cp.getColorValue();
+    
+  }
+}
+*/
 
 // Calculate grid of square cells
 PVector[][] calculateGrid(int cells, float x, float y, float w, float h, float margin_min, float gutter_h, float gutter_v, boolean align_top) {

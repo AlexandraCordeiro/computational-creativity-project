@@ -68,8 +68,11 @@ class Individual {
         canvas.translate(0, 0);
         canvas.noStroke();
         canvas.fill(0);
-        // canvas.fill(r, j, b);
-        // canvas.fill(0, 0, random(255), random(255));
+        float spectralBandwith = this.data.spectralBandwidthList.get(0)[i][j]; 
+        int ratioColors = int(map(spectralBandwith, 0, 4000, 0, 255)); 
+        //println(ratioColors);
+        canvas.fill(ratioColors, ratioColors, ratioColors);
+       
         // canvas.rect(layers[i][j].x, layers[i][j].y, layers[i][j].z, layers[i][j].z);
     
         canvas.circle(layers[i][j].x, layers[i][j].y, layers[i][j].z);
@@ -170,7 +173,7 @@ class Individual {
     }
     
    
-  // Get the phenotype (image)
+  // Get the image
   PImage getPhenotype() {
     PGraphics canvas = createGraphics(this.resolution, this.resolution);
     canvas.beginDraw();
@@ -178,19 +181,16 @@ class Individual {
     canvas.noFill();
     canvas.stroke(0);
     canvas.strokeWeight(canvas.height * 0.002);
-    // createIndividual(canvas, canvas.width / 2, canvas.height / 2);
     render(canvas, canvas.width / 2, canvas.height / 2, canvas.width, canvas.height);
-   
     canvas.endDraw();
     return canvas;
   }
   
-    // Draw the harmonograph line on a given canvas, at a given position and with a given size
-    void render(PGraphics canvas, float cx, float cy, float w, float h) {
+   // Draw the individual on a given canvas
+   void render(PGraphics canvas, float cx, float cy, float w, float h) {
     canvas.pushMatrix();
     canvas.translate(cx, cy);
     canvas.beginShape();
-   // createIndividual(cx,cy);
     renderIndividual(canvas,cx,cy);
     canvas.popMatrix();
   }

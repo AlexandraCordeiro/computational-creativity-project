@@ -116,7 +116,7 @@ def analyze_audio(file_path, num_slices= numCircles * numLayers):
         "amplitude": amplitude_slices,
         "frequency": frequency_slices,
         "zero_crossing_rate": zero_crossing_slices,
-        "spectral_bandwidth": bandwidth_slices,
+        "spectral_bandwidth": bandwidth_slices, #diff between upper and lower frequency correlation with timbre
         "spectral_contrast": contrast_slices,
         "rmse": rmse_slices,
        # "flatness": flatness,
