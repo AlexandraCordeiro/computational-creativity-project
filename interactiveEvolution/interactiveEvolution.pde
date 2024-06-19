@@ -35,7 +35,7 @@ void setup() {
         population.getIndiv(i).createIndividual(0,0);
     }
   cells = calculateGrid(pop_size, 0, 0, width, height, 50, 10, 30, true);
-  textSize(12);
+  textSize(constrain(cells[0][0].z * 0.15, 11, 14));
   textAlign(CENTER, TOP);
 
   // Initialize controlP5
@@ -55,9 +55,9 @@ void setup() {
           .setColorValue(circleColor)
           .setColorBackground(color(100))
           .setColorForeground(color(200));
-   
+*/   
 }
-*/
+
   
  
 void draw() {
@@ -99,7 +99,6 @@ void draw() {
   }
   
   fill(0);
-  textSize(16);
   //textAlign(CENTER, BOTTOM);
   text("Generation: " + population.getGenerations(), width / 2, height - 50);
   
