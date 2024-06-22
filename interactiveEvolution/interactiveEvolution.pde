@@ -17,35 +17,45 @@ PVector[][] cells;
 Individual selected_indiv = null;
 int circleColor = color(255, 0, 0);
 
+DropdownList dropdown;
+int selectedSong = 0; // Default to the first song
+float currFitness = 0.0;
+float hoverFitness = 0.0;
+
 void settings() {
   size(int(displayWidth * 0.9), int(displayHeight * 0.8), P2D);
-  smooth(8);
+  smooth(2);
 }
 
 void setup() {
   //frameRate(60);
   // Load Montserrat font from file (adjust the path to match your setup)
-  montserrat = createFont("./font/Montserrat-Regular.ttf", 12);
+  montserrat = createFont("./font/Montserrat-Medium.ttf", 12);
+  ControlFont font = new ControlFont(montserrat,10);
+ 
   
   // Set text font to Montserrat
   textFont(montserrat);
   
   population = new Population();
-  for (int i = 0; i < population.getSize(); i++) {
-        population.getIndiv(i).createIndividual(0,0);
-    }
+ 
   cells = calculateGrid(pop_size, 0, 0, width, height, 50, 10, 30, true);
   textSize(constrain(cells[0][0].z * 0.15, 11, 14));
-  textAlign(CENTER, TOP);
+  textAlign(CENTER, CENTER);
 
   // Initialize controlP5
   cp5 = new ControlP5(this);
+  cp5.setColorBackground(color(0,0,0));
+  
 
   // Create the button
   cp5.addButton("newGeneration")
      .setLabel("Next")
      .setPosition(width - 200,  height - 50)
-     .setSize(120, 30);
+     .setSize(120, 30)
+     .setFont(font);
+     
+     
      
    /*
   // Create color picker
@@ -56,39 +66,71 @@ void setup() {
           .setColorBackground(color(100))
           .setColorForeground(color(200));
 */   
+
+  
+  // Create DropdownList
+
+  dropdown = cp5.addDropdownList("Select Song")
+               .setPosition(50, 10)
+               .setSize(200, 200)
+               .setItemHeight(30)
+               .setFont(font)
+               .setBarHeight(30);
+               
+  
+  // Add options to DropdownList
+  dropdown.addItem("Song 1", 0);
+  dropdown.addItem("Song 2", 1);
+  dropdown.addItem("Song 3", 2);
+  
+  // Add listener to DropdownList
+  dropdown.addListener(new ControlListener() {
+    public void controlEvent(ControlEvent event) {
+      int songIndex = (int) event.getValue();
+      selectedSong = songIndex;
+      //when changing a song initiate a new population
+      population.init();
+    }
+  });
+
 }
 
   
  
 void draw() {
   background(235);
+   
   selected_indiv = null; // Temporarily clear selected individual
   fill(0);
+  textSize(constrain(cells[0][0].z * 0.15, 11, 14));
+  textAlign(CENTER, TOP);
   text("Choose your favorite images and press next", width/2, 10);
+  textAlign(CENTER,TOP);
   int row = 0, col = 0;
   for (int i = 0; i < population.getSize(); i++) {
     float x = cells[row][col].x;
     float y = cells[row][col].y;
     float d = cells[row][col].z;
-    // Check if current individual is hovered by the cursor
+    population.getIndiv(i).setSong(selectedSong);
+    // Check if current individual is hovered
     noFill();
     if (mouseX > x && mouseX < x + d && mouseY > y && mouseY < y + d) {
       selected_indiv = population.getIndiv(i);
-      stroke(0);
+      stroke(0, 118, 224);
       strokeWeight(3);
       rect(x, y, d, d);
+      currFitness = selected_indiv.getFitness();
+      currFitness += 0.03; // Adjust increment as needed
+      currFitness = constrain(currFitness, 0.0, 1.0); // Ensure fitness is between 0 and 1
+      selected_indiv.setFitness(currFitness);
     }
-    if (population.getIndiv(i).getFitness() > 0) {
-      stroke(50, 200, 50);
-      strokeWeight(6);
-      rect(x, y, d, d);
-    }
+   
     // Draw phenotype of current individual
-    image(population.getIndiv(i).getPhenotype(), x, y, d, d);
+    image(population.getIndiv(i).getPhenotype(resolution), x, y, d, d);
     // Draw fitness of current individual
     fill(0);
    // text(nf(population.getIndiv(i).getFitness(), 0, 2), x + d / 2, y + d + 5);
-    text(population.getIndiv(i).getFitnessText() +" (" + nf(population.getIndiv(i).getFitness(), 0, 0) + ")", x + d / 2, y + d + 5);
+    text("Score: " + nf(population.getIndiv(i).getFitness(), 0, 0), x + d / 2, y + d + 5);
     
     // Go to next grid cell
     col += 1;
@@ -118,7 +160,7 @@ void keyReleased() {
       } else if (keyCode == LEFT) {
         fit = 0;
       }
-      selected_indiv.setFitness(fit);
+     // selected_indiv.setFitness(fit);
     }
   } else if (key == ' ') {
     // Evolve (generate new population)
@@ -127,9 +169,9 @@ void keyReleased() {
     // Initialise new population
     population.init();
   } else if (key == 'e') {
-    // Export selected individual
+   
     if (selected_indiv != null) {
-     // selected_indiv.export();
+      selected_indiv.export();
     }
   }
 }
@@ -149,6 +191,7 @@ void mouseReleased() {
 void newGeneration() {
   population.evolve();
 }
+
 
 /*
 void controlEvent(ControlEvent event) {

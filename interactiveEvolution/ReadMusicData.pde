@@ -6,9 +6,10 @@ class ReadMusicData {
     ArrayList<float[][]> zeroCrossingRateList = new ArrayList<float[][]>();
     ArrayList<float[][]> spectralBandwidthList = new ArrayList<float[][]>();
     ArrayList<float[][]> spectralContrastList = new ArrayList<float[][]>();
+    ArrayList<float[][]> mfccList = new ArrayList<float[][]>();
     ArrayList<float[][]> rmseList = new ArrayList<float[][]>();
-    int duration_ms;
-
+    ArrayList<Integer> durationList = new ArrayList<Integer>();
+    ArrayList<Integer> bpmList = new ArrayList<Integer>();
 
     // Define the number of slices
     int numCircles = 361;
@@ -20,27 +21,20 @@ class ReadMusicData {
         JSONObject data = loadJSONObject("./outputData/sound_data.json");
   
         // Iterate over each song
-        for (int i = 1; i <= 3; i++) {
-            // Extract song object
+        for (int i = 0; i <= 2; i++) {       
             JSONObject song = data.getJSONObject("song" + i);
-            duration_ms = extractMusicDuration(song,"duration");
-            
-            // Extract feature arrays for the current song
+            durationList.add(extractSingleFeature(song,"duration"));
+            bpmList.add(extractSingleFeature(song,"bpm"));
+            mfccList.add(extractFeatureArray(song, "mfcc"));
             amplitudeList.add(extractFeatureArray(song, "amplitude"));
-            frequencyList.add(extractFeatureArray(song, "frequency"));
-            zeroCrossingRateList.add(extractFeatureArray(song, "zero_crossing_rate"));
             spectralBandwidthList.add(extractFeatureArray(song, "spectral_bandwidth"));
-            spectralContrastList.add(extractFeatureArray(song, "spectral_contrast"));
-            rmseList.add(extractFeatureArray(song, "rmse"));
         }
-
-        //println("Amplitude of Song 1:");
-        //print2DArray(amplitudeList.get(0));
-     
     }
 
-    int extractMusicDuration(JSONObject song, String featureName) {
+    int extractSingleFeature(JSONObject song, String featureName) {
+      
         if (song.hasKey(featureName)) {
+           
             float durationSeconds = song.getFloat(featureName);
             return int(round(durationSeconds)); 
         } else {
@@ -70,7 +64,8 @@ class ReadMusicData {
             return null;
         }
     }
-
+    
+  
     // Function to print a 2D array
     void print2DArray(float[][] array) {
     for (int i = 0; i < array.length; i++) {

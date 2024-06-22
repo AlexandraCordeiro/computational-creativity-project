@@ -6,7 +6,6 @@ import json
 numCircles = 361
 numLayers = 20
 
-
 def analyze_audio(file_path, num_slices= numCircles * numLayers):
     # Load the audio file
     y, sr = librosa.load(file_path)
@@ -61,10 +60,10 @@ def analyze_audio(file_path, num_slices= numCircles * numLayers):
     #spectral_bandwidth = librosa.feature.spectral_bandwidth(y=y, sr=sr)[0]
     # spectral_contrast = librosa.feature.spectral_contrast(y=y, sr=sr)[0]
     # rmse = librosa.feature.rms(y=y)[0]
-    mfccs = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13)
+    mfccs = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=1)
     tonnetz = librosa.feature.tonnetz(y=y, sr=sr)
     #onset_env = librosa.onset.onset_strength(y=y, sr=sr)
-    #chroma = librosa.feature.chroma_stft(y=y, sr=sr)
+    chroma = librosa.feature.chroma_stft(y=y, sr=sr)
     zero_crossing_rate = librosa.feature.zero_crossing_rate(y)[0]
     spectral_bandwidth = librosa.feature.spectral_bandwidth(y=y, sr=sr)[0]
     spectral_contrast = librosa.feature.spectral_contrast(y=y, sr=sr)[0]
@@ -96,7 +95,46 @@ def analyze_audio(file_path, num_slices= numCircles * numLayers):
             else:
                 slices.append(0.0)
         return slices
+    
+    '''
 
+    # Compute the onset envelope
+    hop_length = 512  # Default hop length in librosa
+    onset_env = librosa.onset.onset_strength(y=y, sr=sr, hop_length=hop_length)
+
+    # Calculate times corresponding to the onset envelope
+    onset_times = librosa.times_like(onset_env, sr=sr, hop_length=hop_length)
+
+    # Tempo feature extraction
+    tempo_slices = []
+    for i in range(num_slices):
+        start_time = i * slice_duration
+        end_time = (i + 1) * slice_duration
+        mask = (onset_times >= start_time) & (onset_times < end_time)
+        slice_onset_env = onset_env[mask]
+        
+        # Estimate the tempo
+        if len(slice_onset_env) > 0:
+            dtempo = librosa.beat.tempo(onset_envelope=slice_onset_env, sr=sr, aggregate=None)
+            if len(dtempo) > 0:
+                bpm = dtempo[0]
+            else:
+                bpm = 0.0
+        else:
+            bpm = 0.0
+       
+        tempo_slices.append(float(bpm))
+    ''' 
+
+    # Compute the onset envelope for the entire song
+    hop_length = 512  # Adjust hop_length if needed
+    onset_env = librosa.onset.onset_strength(y=y, sr=sr, hop_length=hop_length)
+
+    # Estimate the tempo for the entire song
+    tempo = librosa.beat.tempo(onset_envelope=onset_env, sr=sr)[0]
+    #tempo = librosa.feature.rhythm.tempo(onset_envelope=onset_env, sr=sr, hop_length=hop_length)[0]
+    #tempo_slices = round(float(tempo), 3)
+        
     #zero_crossing_slices = slice_and_average(zero_crossing_rate)
     #bandwidth_slices = slice_and_average(spectral_bandwidth)
     #contrast_slices = slice_and_average(spectral_contrast)
@@ -105,22 +143,23 @@ def analyze_audio(file_path, num_slices= numCircles * numLayers):
     bandwidth_slices = slice_and_average(spectral_bandwidth)
     contrast_slices = slice_and_average(spectral_contrast)
     rmse_slices = slice_and_average(rmse)
-   # mfcc_slices = [slice_and_average(mfcc) for mfcc in mfccs]
+    mfcc_slices = [slice_and_average(mfcc) for mfcc in mfccs]
    # tonnetz_slices = [slice_and_average(t) for t in tonnetz]
    # onset_slices = slice_and_average(onset_env)
-   #chroma_slices = [slice_and_average(c) for c in chroma]
+    chroma_slices = [slice_and_average(c) for c in chroma]
 
     # Prepare the data for this audio file
     data = {
         "duration": ms_duration,
         "amplitude": amplitude_slices,
-        "frequency": frequency_slices,
-        "zero_crossing_rate": zero_crossing_slices,
+        #"frequency": frequency_slices,
+        #"zero_crossing_rate": zero_crossing_slices,
         "spectral_bandwidth": bandwidth_slices, #diff between upper and lower frequency correlation with timbre
-        "spectral_contrast": contrast_slices,
-        "rmse": rmse_slices,
-       # "flatness": flatness,
-       # "mfcc": mfcc_slices,
+        #"spectral_contrast": contrast_slices,
+        #"rmse": rmse_slices,
+       # "flatness": flatness
+        "mfcc": mfcc_slices[0],
+        "bpm": tempo
        #"tonnetz": tonnetz_slices,
         #"chroma": chroma_slices
     }
@@ -131,12 +170,13 @@ def save_to_json(all_data, output_file):
     with open(output_file, 'w') as f:
         json.dump(all_data, f, indent=4)
 
-file_paths = ['./audio/Chopin-ValsaMinuto.wav', './audio/Chopin-ValsaMinuto.wav', './audio/Chopin-ValsaMinuto.wav']
+file_paths = ['./audio/Chopin-ValsaMinuto.wav', './audio/MichaelJackson-BeatIt.mp3', './audio/OtisRedding-SittinOn.mp3']
+#Slipknot-Psychosocial.mp3
 output_file = './outputData/sound_data.json'
 
 # Analyze each audio file and store the results
 all_data = {}
-for i, file_path in enumerate(file_paths, start=1):
+for i, file_path in enumerate(file_paths, start=0):
     song_data = analyze_audio(file_path)
     all_data[f"song{i}"] = song_data
 
@@ -151,8 +191,9 @@ print(f"Analysis data saved to {output_file}")
 # mfcc muito usado e importante de usar.
 
 # librosa.feature.tempo
-# librosa.feature.tempo(*, y=None, sr=22050, onset_envelope=None, tg=None, hop_length=512, start_bpm=120, std_bpm=1.0, ac_size=8.0, max_tempo=320.0, aggregate=<function mean>, prior=None)
+ #librosa.feature.tempo(*, y=None, sr=22050, onset_envelope=None, tg=None, hop_length=512, start_bpm=120, std_bpm=1.0, ac_size=8.0, max_tempo=320.0, aggregate=<function mean>, prior=None)
 # Estimate the tempo (beats per minute)
+# Or a dynamic tempo dtempo = librosa.feature.tempo(onset_envelope=onset_env, sr=sr, aggregate=None)
 
 
 # librosa.feature.spectral_flatness(*, y=None, S=None, n_fft=2048, hop_length=512, win_length=None, window='hann', center=True, pad_mode='constant', amin=1e-10, power=2.0)[source]

@@ -15,9 +15,9 @@
     void init() {
         for (int i = 0; i < individuals.length; i++) {
             individuals[i] = new Individual();
-        }
+            individuals[i].createIndividual(0,0);
+        }     
         generations = 0;
-        
         // reset initial fitness to 0
         for (int i = 0; i < individuals.length; i++) {
         individuals[i].setFitness(0);
