@@ -57,12 +57,24 @@ def analyze_audio(file_path, num_slices= numCircles * numLayers):
     bandwidth_slices = slice_and_average(spectral_bandwidth)
     mfcc_slices = [slice_and_average(mfcc) for mfcc in mfccs]
 
+    # Compute min and max
+    spectral_bandwidth_min = np.min(bandwidth_slices)
+    spectral_bandwidth_max = np.max(bandwidth_slices)
+    mfcc_min = np.min(mfcc_slices, axis=1)
+    mfcc_max = np.max(mfcc_slices, axis=1)
+    print(mfcc_min)
+ 
     # Prepare the data for this audio file
     data = {
         "duration": ms_duration,
         "amplitude": amplitude_slices,
         "spectral_bandwidth": bandwidth_slices, #diff between upper and lower frequency correlation with timbre
+        #"spectral_bandwidth_min": spectral_bandwidth_min,
+        #"spectral_bandwidth_max": spectral_bandwidth_max,
+        
         "mfcc": mfcc_slices[0],
+        #"mfcc_min": mfcc_min[0],
+        #"mfcc_max": mfcc_max[0],
         "bpm": tempo
     }
     return data
