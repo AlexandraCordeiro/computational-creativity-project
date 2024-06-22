@@ -170,10 +170,13 @@ def save_to_json(all_data, output_file):
     with open(output_file, 'w') as f:
         json.dump(all_data, f, indent=4)
 
-#file_paths = ['./audio/Chopin-ValsaMinuto.wav', './audio/MichaelJackson-BeatIt.mp3', './audio/OtisRedding-SittinOn.mp3']
-file_paths = ['./audio/satie/gymnopedie_1.mp3','./audio/satie/gymnopedie_2.mp3','./audio/satie/gymnopedie_3.mp3']
+
+# choose one file_paths
+#file_paths = ['./audio/satie/gymnopedie_1.mp3','./audio/satie/gymnopedie_2.mp3','./audio/satie/gymnopedie_3.mp3']
 #file_paths = ['./audio/chopin/nocturne_op15_n1.mp3','./audio/chopin/nocturne_op15_n2.mp3','./audio/chopin/nocturne_op15_n3.mp3']
-#file_paths = ['./audio/chet/but_not_for_me.mp3','./audio/chet/like_someone_in_love.mp3','./audio/chet/there_will_never_be_another_you.mp3']
+file_paths = ['./audio/chet/but_not_for_me.mp3','./audio/chet/like_someone_in_love.mp3','./audio/chet/there_will_never_be_another_you.mp3']
+#file_paths = ['./audio/michaelJackson/Beat_it.mp3','./audio/michaelJackson/billie_jean.mp3','./audio/michaelJackson/thriller.mp3']
+#file_paths = ['./audio/xenakis/metastasis.mp3','./audio/xenakis/shaar.mp3','./audio/xenakis/shaar.mp3']
 
 output_file = './outputData/sound_data.json'
 
@@ -186,25 +189,3 @@ for i, file_path in enumerate(file_paths, start=0):
 # Save the data to a JSON file
 save_to_json(all_data, output_file)
 print(f"Analysis data saved to {output_file}")
-
-
-# tempo, flatness, mfcc
-# chromatismo interessante.
-
-# mfcc muito usado e importante de usar.
-
-# librosa.feature.tempo
- #librosa.feature.tempo(*, y=None, sr=22050, onset_envelope=None, tg=None, hop_length=512, start_bpm=120, std_bpm=1.0, ac_size=8.0, max_tempo=320.0, aggregate=<function mean>, prior=None)
-# Estimate the tempo (beats per minute)
-# Or a dynamic tempo dtempo = librosa.feature.tempo(onset_envelope=onset_env, sr=sr, aggregate=None)
-
-
-# librosa.feature.spectral_flatness(*, y=None, S=None, n_fft=2048, hop_length=512, win_length=None, window='hann', center=True, pad_mode='constant', amin=1e-10, power=2.0)[source]
-# Compute spectral flatness
-# Spectral flatness (or tonality coefficient) is a measure to quantify how much noise-like a sound is, as opposed to being tone-like 1. A high spectral flatness (closer to 1.0) indicates the spectrum is similar to white noise. It is often converted to decibel.
-
-#mfcc vocal
-
-
-
-#send musid duration in milliseconds too.

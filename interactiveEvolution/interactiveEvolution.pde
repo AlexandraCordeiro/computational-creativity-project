@@ -79,7 +79,6 @@ void setup() {
 }
 
   
- 
 void draw() {
   background(235);
    
@@ -131,7 +130,7 @@ void draw() {
 void keyReleased() {
  if (key == 'e') {
     if (selected_indiv != null) {
-      selected_indiv.export();
+      selected_indiv.export(population.getGenerations(), selectedSong +1);
     }
   }
 }
@@ -151,7 +150,6 @@ void mouseReleased() {
 void newGeneration() {
   population.evolve();
 }
-
 
 
 // Calculate grid of square cells

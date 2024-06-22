@@ -180,8 +180,8 @@ class Individual {
     canvas.popMatrix();
   }
 
-  void export() {
-    String output_filename = year() + "-" + nf(month(), 2) + "-" + nf(day(), 2) + "-" + nf(hour(), 2) + "-" + nf(minute(), 2) + "-" + nf(second(), 2);
+  void export(int gen, int song) {
+    String output_filename = "gen" + gen + "_" + song;
     String output_path = sketchPath("outputs/" + output_filename);
     println("Exporting individual to: " + output_path);
     getPhenotype(1080).save(output_path + ".png");
