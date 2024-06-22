@@ -23,6 +23,18 @@
         individuals[i].setFitness(0);
         }
     }
+    
+     void initWithSong(int song) {
+        for (int i = 0; i < individuals.length; i++) {
+            individuals[i] = new Individual(song);
+            individuals[i].createIndividual(0,0);
+        }     
+        generations = 0;
+        // reset initial fitness to 0
+        for (int i = 0; i < individuals.length; i++) {
+        individuals[i].setFitness(0);
+        }
+    }
 
 
   // Create the next generation

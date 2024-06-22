@@ -2,7 +2,7 @@ import processing.pdf.*;
 
 
 class Individual {
-    int song = 0;
+    int song;
     float fitness = 0;
     int num_layers = 20;
     int num_circles = 360;
@@ -15,6 +15,18 @@ class Individual {
    
     Individual() {
         // init PVector
+       
+        for (int i = 0; i < this.num_layers; i++) {
+            this.layers[i] = new PVector[this.num_circles + 1];
+            for (int j = 0; j <= this.num_circles; j++) {
+                this.layers[i][j] = new PVector(); // Initialize each PVector
+            }
+        }
+    };
+    
+     Individual(int song) {
+        // init PVector
+        this.song = song;
         for (int i = 0; i < this.num_layers; i++) {
             this.layers[i] = new PVector[this.num_circles + 1];
             for (int j = 0; j <= this.num_circles; j++) {

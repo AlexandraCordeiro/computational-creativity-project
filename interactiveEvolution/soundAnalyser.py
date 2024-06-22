@@ -170,8 +170,11 @@ def save_to_json(all_data, output_file):
     with open(output_file, 'w') as f:
         json.dump(all_data, f, indent=4)
 
-file_paths = ['./audio/Chopin-ValsaMinuto.wav', './audio/MichaelJackson-BeatIt.mp3', './audio/OtisRedding-SittinOn.mp3']
-#Slipknot-Psychosocial.mp3
+#file_paths = ['./audio/Chopin-ValsaMinuto.wav', './audio/MichaelJackson-BeatIt.mp3', './audio/OtisRedding-SittinOn.mp3']
+file_paths = ['./audio/satie/gymnopedie_1.mp3','./audio/satie/gymnopedie_2.mp3','./audio/satie/gymnopedie_3.mp3']
+#file_paths = ['./audio/chopin/nocturne_op15_n1.mp3','./audio/chopin/nocturne_op15_n2.mp3','./audio/chopin/nocturne_op15_n3.mp3']
+#file_paths = ['./audio/chet/but_not_for_me.mp3','./audio/chet/like_someone_in_love.mp3','./audio/chet/there_will_never_be_another_you.mp3']
+
 output_file = './outputData/sound_data.json'
 
 # Analyze each audio file and store the results

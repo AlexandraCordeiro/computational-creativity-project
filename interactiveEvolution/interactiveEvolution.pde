@@ -3,8 +3,6 @@ import processing.core.*;
 
 PFont montserrat;
 ControlP5 cp5;
-ColorPicker cp;
-
 int pop_size = 8;
 int elite_size = 1;
 int tournament_size = 3;
@@ -23,7 +21,7 @@ float currFitness = 0.0;
 float hoverFitness = 0.0;
 
 void settings() {
-  size(int(displayWidth * 0.9), int(displayHeight * 0.8), P2D);
+  size(int(displayWidth * 0.9), int(displayHeight * 0.9), P2D);
   smooth(2);
 }
 
@@ -47,7 +45,6 @@ void setup() {
   cp5 = new ControlP5(this);
   cp5.setColorBackground(color(0,0,0));
   
-
   // Create the button
   cp5.addButton("newGeneration")
      .setLabel("Next")
@@ -55,23 +52,9 @@ void setup() {
      .setSize(120, 30)
      .setFont(font);
      
-     
-     
-   /*
-  // Create color picker
-  cp = cp5.addColorPicker("colorPicker")
-          .setPosition(50, height - 60)
-          .setSize(50, 50)
-          .setColorValue(circleColor)
-          .setColorBackground(color(100))
-          .setColorForeground(color(200));
-*/   
-
-  
   // Create DropdownList
-
-  dropdown = cp5.addDropdownList("Select Song")
-               .setPosition(50, 10)
+  dropdown = cp5.addDropdownList("Song 1")
+               .setPosition(50, height - 150)
                .setSize(200, 200)
                .setItemHeight(30)
                .setFont(font)
@@ -89,7 +72,7 @@ void setup() {
       int songIndex = (int) event.getValue();
       selectedSong = songIndex;
       //when changing a song initiate a new population
-      population.init();
+      population.initWithSong(songIndex);
     }
   });
 
@@ -104,14 +87,14 @@ void draw() {
   fill(0);
   textSize(constrain(cells[0][0].z * 0.15, 11, 14));
   textAlign(CENTER, TOP);
-  text("Choose your favorite images and press next", width/2, 10);
+  text("Select/Hover over your favorite images to increase their score and press next", width/2, 10);
   textAlign(CENTER,TOP);
   int row = 0, col = 0;
   for (int i = 0; i < population.getSize(); i++) {
     float x = cells[row][col].x;
     float y = cells[row][col].y;
     float d = cells[row][col].z;
-    population.getIndiv(i).setSong(selectedSong);
+  
     // Check if current individual is hovered
     noFill();
     if (mouseX > x && mouseX < x + d && mouseY > y && mouseY < y + d) {
@@ -141,35 +124,12 @@ void draw() {
   }
   
   fill(0);
-  //textAlign(CENTER, BOTTOM);
   text("Generation: " + population.getGenerations(), width / 2, height - 50);
   
 }
 
 void keyReleased() {
-  if (key == CODED) {
-    if (selected_indiv != null) {
-      // Change fitness of the selected (hovered) individual
-      float fit = selected_indiv.getFitness();
-      if (keyCode == UP) {
-        fit = min(fit + 0.1, 1);
-      } else if (keyCode == DOWN) {
-        fit = max(fit - 0.1, 0);
-      } else if (keyCode == RIGHT) {
-        fit = 1;
-      } else if (keyCode == LEFT) {
-        fit = 0;
-      }
-     // selected_indiv.setFitness(fit);
-    }
-  } else if (key == ' ') {
-    // Evolve (generate new population)
-    population.evolve();
-  } else if (key == 'i') {
-    // Initialise new population
-    population.init();
-  } else if (key == 'e') {
-   
+ if (key == 'e') {
     if (selected_indiv != null) {
       selected_indiv.export();
     }
@@ -193,14 +153,6 @@ void newGeneration() {
 }
 
 
-/*
-void controlEvent(ControlEvent event) {
-  if (event.isFrom(cp)) {
-    circleColor = cp.getColorValue();
-    
-  }
-}
-*/
 
 // Calculate grid of square cells
 PVector[][] calculateGrid(int cells, float x, float y, float w, float h, float margin_min, float gutter_h, float gutter_v, boolean align_top) {
