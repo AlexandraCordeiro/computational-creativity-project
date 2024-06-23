@@ -69,12 +69,12 @@ def analyze_audio(file_path, num_slices= numCircles * numLayers):
         "duration": ms_duration,
         "amplitude": amplitude_slices,
         "spectral_bandwidth": bandwidth_slices, #diff between upper and lower frequency correlation with timbre
-        #"spectral_bandwidth_min": spectral_bandwidth_min,
-        #"spectral_bandwidth_max": spectral_bandwidth_max,
+        "spectral_bandwidth_min": spectral_bandwidth_min,
+        "spectral_bandwidth_max": spectral_bandwidth_max,
         
         "mfcc": mfcc_slices[0],
-        #"mfcc_min": mfcc_min[0],
-        #"mfcc_max": mfcc_max[0],
+        "mfcc_min": mfcc_min[0],
+        "mfcc_max": mfcc_max[0],
         "bpm": tempo
     }
     return data
@@ -84,9 +84,9 @@ def save_to_json(all_data, output_file):
         json.dump(all_data, f, indent=4)
 
 # choose one file_paths
-#file_paths = ['./audio/satie/gymnopedie_1.mp3','./audio/satie/gymnopedie_2.mp3','./audio/satie/gymnopedie_3.mp3']
+file_paths = ['./audio/satie/gymnopedie_1.mp3','./audio/satie/gymnopedie_2.mp3','./audio/satie/gymnopedie_3.mp3']
 #file_paths = ['./audio/chopin/nocturne_op15_n1.mp3','./audio/chopin/nocturne_op15_n2.mp3','./audio/chopin/nocturne_op15_n3.mp3']
-file_paths = ['./audio/chet/but_not_for_me.mp3','./audio/chet/like_someone_in_love.mp3','./audio/chet/there_will_never_be_another_you.mp3']
+#file_paths = ['./audio/chet/but_not_for_me.mp3','./audio/chet/like_someone_in_love.mp3','./audio/chet/there_will_never_be_another_you.mp3']
 #file_paths = ['./audio/michaelJackson/Beat_it.mp3','./audio/michaelJackson/billie_jean.mp3','./audio/michaelJackson/thriller.mp3']
 #file_paths = ['./audio/xenakis/metastasis.mp3','./audio/xenakis/shaar.mp3','./audio/xenakis/shaar.mp3']
 

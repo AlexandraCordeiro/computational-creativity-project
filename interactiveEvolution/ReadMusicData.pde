@@ -10,6 +10,11 @@ class ReadMusicData {
     ArrayList<float[][]> rmseList = new ArrayList<float[][]>();
     ArrayList<Integer> durationList = new ArrayList<Integer>();
     ArrayList<Integer> bpmList = new ArrayList<Integer>();
+    ArrayList<Integer> spectralMax = new ArrayList<Integer>();;
+    ArrayList<Integer> spectralMin = new ArrayList<Integer>();;
+    ArrayList<Integer> mfccMax = new ArrayList<Integer>();
+    ArrayList<Integer> mfccMin = new ArrayList<Integer>();
+
 
     // Define the number of slices
     int numCircles = 361;
@@ -28,6 +33,10 @@ class ReadMusicData {
             mfccList.add(extractFeatureArray(song, "mfcc"));
             amplitudeList.add(extractFeatureArray(song, "amplitude"));
             spectralBandwidthList.add(extractFeatureArray(song, "spectral_bandwidth"));
+            spectralMax.add(extractSingleFeature(song,"spectral_bandwidth_max"));
+            spectralMin.add(extractSingleFeature(song,"spectral_bandwidth_min"));
+            mfccMax.add(extractSingleFeature(song,"mfcc_max"));
+            mfccMin.add(extractSingleFeature(song,"mfcc_min"));
         }
     }
 

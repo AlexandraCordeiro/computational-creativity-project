@@ -71,7 +71,7 @@ class Individual {
         canvas.noStroke();
         canvas.fill(0);
         float spectralBandwith = this.data.spectralBandwidthList.get(this.song)[i][j]; 
-        int ratioColor = int(map(spectralBandwith, 0, 4000, 0, 255));     
+        int ratioColor = int(map(spectralBandwith, this.data.spectralMin.get(this.song), this.data.spectralMax.get(this.song), 0, 255));     
         canvas.fill(ratioColor, ratioColor, ratioColor);
         canvas.circle(layers[i][j].x, layers[i][j].y, layers[i][j].z);
         canvas.popMatrix();
@@ -80,8 +80,8 @@ class Individual {
     }
 
     PVector[] imperfectCircle(float xi, float yi, float r, float t, int layer) {
+        
         float speed = 0.03; 
-        float bobbleRate = 1;
         float phase = t*speed;
         PVector[] layerCoordinates = new PVector[this.num_circles + 1];
         int n = 0;
@@ -89,16 +89,18 @@ class Individual {
         push();
         translate(xi, yi);
         for (float i = 0; i <= TWO_PI; i += PI/180) {
-            
+            float mfcc = this.data.mfccList.get(this.song)[layer][n];
+            int mfcc_normalized = int(map(mfcc,this.data.mfccMin.get(this.song), this.data.mfccMax.get(this.song), 0.5,2)); 
+            float bobbleRate = mfcc_normalized;
+
             float xoff = map(cos(i), -1, 1, 0, bobbleRate);
             float yoff = map(sin(i), -1, 1, 0, bobbleRate);
             float noise = noise(xoff + phase, yoff + phase);
             float new_r = map(noise, 0, 1, 80, r);
-            float mfcc = this.data.mfccList.get(this.song)[layer][n];
-            int mfcc_normalized = int(map(mfcc, -700, 100, 0.7,2)); 
+            
             float amplitude = this.data.amplitudeList.get(this.song)[layer][n];
-            float x = new_r  * cos(i * mfcc_normalized); 
-            float y = new_r  * sin(i * mfcc_normalized);           
+            float x = new_r  * cos(i /* * mfcc_normalized */); 
+            float y = new_r  * sin(i /* * mfcc_normalized */);           
             int raio = int(map(amplitude, 0, 1, 1, 50)); 
             layerCoordinates[n] = new PVector(x, y, raio);
             n++;               
@@ -194,4 +196,42 @@ class Individual {
     pdf.dispose();
     pdf.endDraw();
   }
+
+  /* float findMax(float[][] list, int layer) {
+        if (layer < 0 || layer >= list.size()) {
+            throw new IllegalArgumentException("Invalid layer index");
+        }
+        
+        float[][] array = list.get(layer);
+        float max = Float.NEGATIVE_INFINITY;
+        
+        for (float[] row : array) {
+            for (float value : row) {
+                if (value > max) {
+                    max = value;
+                }
+            }
+        }
+        
+        return max;
+    }
+    
+    float findMin(float[][] list, int layer) {
+        if (layer < 0 || layer >= list.size()) {
+            throw new IllegalArgumentException("Invalid layer index");
+        }
+        
+        float[][] array = list.get(layer);
+        float min = Float.POSITIVE_INFINITY;
+        
+        for (float[] row : array) {
+            for (float value : row) {
+                if (value < min) {
+                    min = value;
+                }
+            }
+        }
+        
+        return min;
+    } */
 }
