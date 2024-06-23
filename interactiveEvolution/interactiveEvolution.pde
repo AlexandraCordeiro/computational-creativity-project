@@ -3,22 +3,18 @@ import processing.core.*;
 
 PFont montserrat;
 ControlP5 cp5;
-int pop_size = 8;
+int pop_size = 18;
 int elite_size = 1;
 int tournament_size = 3;
 float crossover_rate = 0.7;
 float mutation_rate = 0.2;
 int resolution = 1080;
-
 Population population;
 PVector[][] cells;
 Individual selected_indiv = null;
-int circleColor = color(255, 0, 0);
-
 DropdownList dropdown;
 int selectedSong = 0; // Default to the first song
 float currFitness = 0.0;
-float hoverFitness = 0.0;
 
 void settings() {
   size(int(displayWidth * 0.9), int(displayHeight * 0.9), P2D);
@@ -26,17 +22,13 @@ void settings() {
 }
 
 void setup() {
-  //frameRate(60);
-  // Load Montserrat font from file (adjust the path to match your setup)
+  
   montserrat = createFont("./font/Montserrat-Medium.ttf", 12);
   ControlFont font = new ControlFont(montserrat,10);
  
-  
   // Set text font to Montserrat
   textFont(montserrat);
-  
   population = new Population();
- 
   cells = calculateGrid(pop_size, 0, 0, width, height, 50, 10, 30, true);
   textSize(constrain(cells[0][0].z * 0.15, 11, 14));
   textAlign(CENTER, CENTER);
@@ -48,20 +40,18 @@ void setup() {
   // Create the button
   cp5.addButton("newGeneration")
      .setLabel("Next")
-     .setPosition(width - 200,  height - 50)
+     .setPosition(width - 180,  height - 50)
      .setSize(120, 30)
      .setFont(font);
      
   // Create DropdownList
   dropdown = cp5.addDropdownList("Song 1")
-               .setPosition(50, height - 150)
+               .setPosition(50, height - 130)
                .setSize(200, 200)
                .setItemHeight(30)
                .setFont(font)
                .setBarHeight(30);
                
-  
-  // Add options to DropdownList
   dropdown.addItem("Song 1", 0);
   dropdown.addItem("Song 2", 1);
   dropdown.addItem("Song 3", 2);
@@ -81,8 +71,7 @@ void setup() {
   
 void draw() {
   background(235);
-   
-  selected_indiv = null; // Temporarily clear selected individual
+  selected_indiv = null;
   fill(0);
   textSize(constrain(cells[0][0].z * 0.15, 11, 14));
   textAlign(CENTER, TOP);
@@ -102,7 +91,7 @@ void draw() {
       strokeWeight(3);
       rect(x, y, d, d);
       currFitness = selected_indiv.getFitness();
-      currFitness += 0.03; // Adjust increment as needed
+      currFitness += 0.03;
       currFitness = constrain(currFitness, 0.0, 1.0); // Ensure fitness is between 0 and 1
       selected_indiv.setFitness(currFitness);
     }
@@ -111,7 +100,6 @@ void draw() {
     image(population.getIndiv(i).getPhenotype(resolution), x, y, d, d);
     // Draw fitness of current individual
     fill(0);
-   // text(nf(population.getIndiv(i).getFitness(), 0, 2), x + d / 2, y + d + 5);
     text("Score: " + nf(population.getIndiv(i).getFitness(), 0, 0), x + d / 2, y + d + 5);
     
     // Go to next grid cell
@@ -146,13 +134,13 @@ void mouseReleased() {
   }
 }
 
-// Button callback function
+// Button callback function to generate new individuals
 void newGeneration() {
   population.evolve();
 }
 
 
-// Calculate grid of square cells
+// Generate grid of cells
 PVector[][] calculateGrid(int cells, float x, float y, float w, float h, float margin_min, float gutter_h, float gutter_v, boolean align_top) {
   int cols = 0, rows = 0;
   float cell_size = 0;

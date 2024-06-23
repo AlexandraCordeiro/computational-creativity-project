@@ -14,8 +14,6 @@ class Individual {
     int layer_offset = this.data.bpmList.get(song);
    
     Individual() {
-        // init PVector
-       
         for (int i = 0; i < this.num_layers; i++) {
             this.layers[i] = new PVector[this.num_circles + 1];
             for (int j = 0; j <= this.num_circles; j++) {
@@ -25,7 +23,6 @@ class Individual {
     };
     
      Individual(int song) {
-        // init PVector
         this.song = song;
         for (int i = 0; i < this.num_layers; i++) {
             this.layers[i] = new PVector[this.num_circles + 1];
@@ -45,9 +42,8 @@ class Individual {
             }
         }
     }
-
         
-       // Create individual shapes
+    // Create individual shapes
     void createIndividual(float cx, float cy) {
         noiseSeed(millis());
         // Adjust the radius increment based on BPM
@@ -60,27 +56,25 @@ class Individual {
         }
     }
     
-
     // Render individual shapes
     void renderIndividual(PGraphics canvas, float cx, float cy) {
-
-    for (int i = 0; i < num_layers; i++) {
-        for (int j = 0; j <= num_circles; j++) {
-        canvas.pushMatrix();
-        canvas.translate(0, 0);
-        canvas.noStroke();
-        canvas.fill(0);
-        float spectralBandwith = this.data.spectralBandwidthList.get(this.song)[i][j]; 
-        int ratioColor = int(map(spectralBandwith, this.data.spectralMin.get(this.song), this.data.spectralMax.get(this.song), 0, 255));     
-        canvas.fill(ratioColor, ratioColor, ratioColor);
-        canvas.circle(layers[i][j].x, layers[i][j].y, layers[i][j].z);
-        canvas.popMatrix();
-        }
-     }
+      for (int i = 0; i < num_layers; i++) {
+          for (int j = 0; j <= num_circles; j++) {
+          canvas.pushMatrix();
+          canvas.translate(0, 0);
+          canvas.noStroke();
+          canvas.fill(0);
+          float spectralBandwith = this.data.spectralBandwidthList.get(this.song)[i][j]; 
+          int ratioColor = int(map(spectralBandwith, this.data.spectralMin.get(this.song), this.data.spectralMax.get(this.song), 0, 255));     
+          canvas.fill(ratioColor, ratioColor, ratioColor);
+          canvas.circle(layers[i][j].x, layers[i][j].y, layers[i][j].z);
+          canvas.popMatrix();
+          }
+       }
     }
 
-    PVector[] imperfectCircle(float xi, float yi, float r, float t, int layer) {
-        
+    // generate imperfect circles 
+    PVector[] imperfectCircle(float xi, float yi, float r, float t, int layer) { 
         float speed = 0.03; 
         float phase = t*speed;
         PVector[] layerCoordinates = new PVector[this.num_circles + 1];
@@ -92,15 +86,13 @@ class Individual {
             float mfcc = this.data.mfccList.get(this.song)[layer][n];
             int mfcc_normalized = int(map(mfcc,this.data.mfccMin.get(this.song), this.data.mfccMax.get(this.song), 0.5,2)); 
             float bobbleRate = mfcc_normalized;
-
             float xoff = map(cos(i), -1, 1, 0, bobbleRate);
             float yoff = map(sin(i), -1, 1, 0, bobbleRate);
             float noise = noise(xoff + phase, yoff + phase);
             float new_r = map(noise, 0, 1, 80, r);
-            
             float amplitude = this.data.amplitudeList.get(this.song)[layer][n];
-            float x = new_r  * cos(i /* * mfcc_normalized */); 
-            float y = new_r  * sin(i /* * mfcc_normalized */);           
+            float x = new_r  * cos(i); 
+            float y = new_r  * sin(i);           
             int raio = int(map(amplitude, 0, 1, 1, 50)); 
             layerCoordinates[n] = new PVector(x, y, raio);
             n++;               
@@ -112,6 +104,7 @@ class Individual {
 
     Individual onePointCrossover(Individual partner) {
         Individual child = new Individual();
+        randomSeed(millis());
         int crossover_point = int(random(1, this.num_layers - 1));
         for (int i = 0; i < this.num_layers; i++) {
             for (int j = 0; j <= this.num_circles; j++) {
@@ -197,41 +190,4 @@ class Individual {
     pdf.endDraw();
   }
 
-  /* float findMax(float[][] list, int layer) {
-        if (layer < 0 || layer >= list.size()) {
-            throw new IllegalArgumentException("Invalid layer index");
-        }
-        
-        float[][] array = list.get(layer);
-        float max = Float.NEGATIVE_INFINITY;
-        
-        for (float[] row : array) {
-            for (float value : row) {
-                if (value > max) {
-                    max = value;
-                }
-            }
-        }
-        
-        return max;
-    }
-    
-    float findMin(float[][] list, int layer) {
-        if (layer < 0 || layer >= list.size()) {
-            throw new IllegalArgumentException("Invalid layer index");
-        }
-        
-        float[][] array = list.get(layer);
-        float min = Float.POSITIVE_INFINITY;
-        
-        for (float[] row : array) {
-            for (float value : row) {
-                if (value < min) {
-                    min = value;
-                }
-            }
-        }
-        
-        return min;
-    } */
 }

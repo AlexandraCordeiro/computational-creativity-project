@@ -1,5 +1,4 @@
 class ReadMusicData {
-
     // Define arrays to store the feature data for all songs
     ArrayList<float[][]> amplitudeList = new ArrayList<float[][]>();
     ArrayList<float[][]> frequencyList = new ArrayList<float[][]>();
@@ -15,14 +14,12 @@ class ReadMusicData {
     ArrayList<Integer> mfccMax = new ArrayList<Integer>();
     ArrayList<Integer> mfccMin = new ArrayList<Integer>();
 
-
     // Define the number of slices
     int numCircles = 361;
     int numLayers = 20;
     int numSlices = numCircles * numLayers;
 
     ReadMusicData() {
-        println("*****");
         JSONObject data = loadJSONObject("./outputData/sound_data.json");
   
         // Iterate over each song
@@ -40,8 +37,8 @@ class ReadMusicData {
         }
     }
 
+    //function to extract single data
     int extractSingleFeature(JSONObject song, String featureName) {
-      
         if (song.hasKey(featureName)) {
            
             float durationSeconds = song.getFloat(featureName);
@@ -52,6 +49,7 @@ class ReadMusicData {
         }
     }
 
+    //function to extract an array of data
     float[][] extractFeatureArray(JSONObject song, String featureName) {
         JSONArray originalArray = song.getJSONArray(featureName);
         if (originalArray != null) {
@@ -72,16 +70,5 @@ class ReadMusicData {
             println("Feature array '" + featureName + "' not found in song data.");
             return null;
         }
-    }
-    
-  
-    // Function to print a 2D array
-    void print2DArray(float[][] array) {
-    for (int i = 0; i < array.length; i++) {
-        for (int j = 0; j < array[i].length; j++) {
-        print(array[i][j] + " ");
-        }
-        println();
-    }
     }
 }
