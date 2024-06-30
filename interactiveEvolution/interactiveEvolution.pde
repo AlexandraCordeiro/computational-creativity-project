@@ -1,6 +1,10 @@
 import controlP5.*;
 import processing.core.*;
 
+import processing.sound.*;
+
+SoundFile player;
+
 PFont montserrat;
 ControlP5 cp5;
 int pop_size = 18;
@@ -15,6 +19,7 @@ Individual selected_indiv = null;
 DropdownList dropdown;
 int selectedSong = 0; // Default to the first song
 float currFitness = 0.0;
+ArrayList<String> songNames = new ArrayList<String>();
 
 void settings() {
   size(int(displayWidth * 0.9), int(displayHeight * 0.9), P2D);
@@ -22,10 +27,10 @@ void settings() {
 }
 
 void setup() {
-  
+  musicNames();
   montserrat = createFont("./font/Montserrat-Medium.ttf", 12);
   ControlFont font = new ControlFont(montserrat,10);
- 
+  playMusic(0);
   // Set text font to Montserrat
   textFont(montserrat);
   population = new Population();
@@ -45,24 +50,27 @@ void setup() {
      .setFont(font);
      
   // Create DropdownList
-  dropdown = cp5.addDropdownList("Song 1")
+  dropdown = cp5.addDropdownList(songNames.get(0))
                .setPosition(50, height - 130)
                .setSize(200, 200)
                .setItemHeight(30)
                .setFont(font)
                .setBarHeight(30);
                
-  dropdown.addItem("Song 1", 0);
-  dropdown.addItem("Song 2", 1);
-  dropdown.addItem("Song 3", 2);
+  dropdown.addItem(songNames.get(0), 0);
+  dropdown.addItem(songNames.get(1), 1);
+  dropdown.addItem(songNames.get(2), 2);
   
   // Add listener to DropdownList
   dropdown.addListener(new ControlListener() {
     public void controlEvent(ControlEvent event) {
+      stopMusic();
       int songIndex = (int) event.getValue();
       selectedSong = songIndex;
       //when changing a song initiate a new population
       population.initWithSong(songIndex);
+
+      playMusic(songIndex);
     }
   });
 
@@ -169,4 +177,41 @@ PVector[][] calculateGrid(int cells, float x, float y, float w, float h, float m
     }
   }
   return positions;
+}
+
+void playMusic(int songID) {
+  JSONObject data = loadJSONObject("./outputData/sound_data.json");
+  JSONObject song = data.getJSONObject("song" + songID);
+  String songPath = song.getString("file_path");   
+  player = new SoundFile(this,songPath);
+  player.play();
+
+}
+
+void stopMusic() {
+  if (player != null) {
+    player.pause();
+  }
+}
+
+void musicNames(){
+  JSONObject data = loadJSONObject("./outputData/sound_data.json");
+ 
+
+   for (int i = 0; i <= 2; i++) {       
+      JSONObject song = data.getJSONObject("song" + i);
+      String songPath = song.getString("file_path");   
+      // Get the file name from the path
+      File file = new File(songPath);
+      String fileName = file.getName();  // This gives you the file name with extension
+      String parentFolder = file.getParentFile().getName(); // This gives you the folder name (singer name)
+
+
+
+      // Remove the file extension from the file name
+      int extensionIndex = fileName.lastIndexOf('.');
+      String fileNameWithoutExtension = extensionIndex == -1 ? fileName : fileName.substring(0, extensionIndex);
+      songNames.add(parentFolder + " - " + fileNameWithoutExtension);
+    }
+   
 }

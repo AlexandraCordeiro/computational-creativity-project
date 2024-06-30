@@ -13,6 +13,8 @@ class ReadMusicData {
     ArrayList<Integer> spectralMin = new ArrayList<Integer>();;
     ArrayList<Integer> mfccMax = new ArrayList<Integer>();
     ArrayList<Integer> mfccMin = new ArrayList<Integer>();
+    ArrayList<String> musicPath = new ArrayList<String>();
+
 
     // Define the number of slices
     int numCircles = 361;
@@ -35,6 +37,20 @@ class ReadMusicData {
             mfccMax.add(extractSingleFeature(song,"mfcc_max"));
             mfccMin.add(extractSingleFeature(song,"mfcc_min"));
         }
+       
+    }
+
+ 
+
+    String extractSongPath(JSONObject song, String featureName){  
+        if (song.hasKey(featureName)) {
+           
+            String songPath = song.getString(featureName);
+            return songPath;
+
+        } else {
+        return ""; // Or handle it as needed, e.g., return null or an error message
+    }
     }
 
     //function to extract single data

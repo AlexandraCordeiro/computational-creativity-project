@@ -1,4 +1,5 @@
 import librosa
+from matplotlib import pyplot as plt
 import numpy as np
 import json
 
@@ -10,12 +11,33 @@ def analyze_audio(file_path, num_slices= numCircles * numLayers):
     y, sr = librosa.load(file_path)
 
     # Normalize the audio signal
-    y = librosa.util.normalize(y)
+   # y = librosa.util.normalize(y)
 
     # duration of the audio in seconds
     duration = librosa.get_duration(y=y, sr=sr)
     ms_duration = duration * 1000
 
+     # Calculate the slice duration in samples
+    slice_length = len(y) // num_slices
+
+    
+    f0_slices = []
+    '''
+    # fundamental frequency for each slice
+    for i in range(num_slices):
+        start = i * slice_length
+        end = (i + 1) * slice_length
+        y_slice = y[start:end]
+        #print(y_slice)
+       
+        f0, voiced_flag, voiced_probs = librosa.pyin(y_slice, fmin=librosa.note_to_hz('C2'), fmax=librosa.note_to_hz('C7'))
+
+        f0_clean = f0[~np.isnan(f0)]
+        if f0_clean.size > 0:
+            f0_slices.append(np.mean(f0_clean))
+        else:
+            f0_slices.append(0)  # or another fallback value
+        '''
     # Compute the amplitude (unitless)
     amplitude = np.abs(y)
 
@@ -62,19 +84,20 @@ def analyze_audio(file_path, num_slices= numCircles * numLayers):
     spectral_bandwidth_max = np.max(bandwidth_slices)
     mfcc_min = np.min(mfcc_slices, axis=1)
     mfcc_max = np.max(mfcc_slices, axis=1)
-    print(mfcc_min)
+    #print(mfcc_min)
  
     # Prepare the data for this audio file
     data = {
+        "file_path": file_path,
         "duration": ms_duration,
         "amplitude": amplitude_slices,
         "spectral_bandwidth": bandwidth_slices, #diff between upper and lower frequency correlation with timbre
         "spectral_bandwidth_min": spectral_bandwidth_min,
         "spectral_bandwidth_max": spectral_bandwidth_max,
-        
         "mfcc": mfcc_slices[0],
         "mfcc_min": mfcc_min[0],
         "mfcc_max": mfcc_max[0],
+        "fundamental_freq": f0_slices,
         "bpm": tempo
     }
     return data
@@ -87,8 +110,8 @@ def save_to_json(all_data, output_file):
 #file_paths = ['./audio/satie/gymnopedie_1.mp3','./audio/satie/gymnopedie_2.mp3','./audio/satie/gymnopedie_3.mp3']
 #file_paths = ['./audio/chopin/nocturne_op15_n1.mp3','./audio/chopin/nocturne_op15_n2.mp3','./audio/chopin/nocturne_op15_n3.mp3']
 #file_paths = ['./audio/chet/but_not_for_me.mp3','./audio/chet/like_someone_in_love.mp3','./audio/chet/there_will_never_be_another_you.mp3']
-#file_paths = ['./audio/michaelJackson/Beat_it.mp3','./audio/michaelJackson/billie_jean.mp3','./audio/michaelJackson/thriller.mp3']
-file_paths = ['./audio/xenakis/metastasis.mp3','./audio/xenakis/shaar.mp3','./audio/xenakis/shaar.mp3']
+file_paths = ['./audio/michaelJackson/Beat_it.mp3','./audio/michaelJackson/billie_jean.mp3','./audio/michaelJackson/thriller.mp3']
+#file_paths = ['./audio/xenakis/metastasis.mp3','./audio/xenakis/shaar.mp3','./audio/xenakis/shaar.mp3']
 
 output_file = './outputData/sound_data.json'
 
